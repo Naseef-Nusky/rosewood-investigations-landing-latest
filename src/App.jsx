@@ -148,7 +148,29 @@ function QuoteForm({ variant }) {
   )
 }
 
+const FAQ_ITEMS = [
+  {
+    question: 'How much does a private investigator cost?',
+    content: (
+      <>
+        <p className="mb-3">
+          If you're wondering how much does a private investigator cost, our
+          private investigator prices are competitive, offering cheap private
+          investigators near me without compromising quality.
+        </p>
+        <p>
+          If you need to hire an investigator, whether for personal or legal
+          matters, Rosewood Investigations is the name you can rely on. Contact
+          us today to speak with a professional investigator.
+        </p>
+      </>
+    ),
+  },
+]
+
 function App() {
+  const [openFaqIndex, setOpenFaqIndex] = useState(null)
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       {/* Header - full width */}
@@ -162,11 +184,14 @@ function App() {
             />
           </div>
           <div className="flex flex-col items-stretch gap-2 text-xs md:flex-row md:items-center md:gap-4">
-            <button className="rounded-full bg-[#0052cc] px-6 py-2 text-xs font-semibold tracking-[0.25em] text-white hover:bg-[#0043a3]">
-              0740&nbsp;7612&nbsp;398
-            </button>
             <a
-              href="tel:01234567890"
+              href="tel:07407612398"
+              className="rounded-full bg-[#0052cc] px-6 py-2 text-center text-xs font-semibold tracking-[0.25em] text-white hover:bg-[#0043a3]"
+            >
+              0740&nbsp;761&nbsp;2398
+            </a>
+            <a
+              href="tel:07407612398"
               className="rounded-full bg-[#0052cc] px-6 py-2 text-center text-[11px] font-semibold tracking-[0.18em] text-white hover:bg-[#0043a3]"
             >
               CALL US TODAY FOR A
@@ -230,15 +255,31 @@ function App() {
         <div className="relative mx-auto max-w-4xl px-4 py-10 text-center">
           <h2 className="text-3xl font-semibold text-sky-400">About Us</h2>
           <p className="mt-4 text-base leading-relaxed md:text-lg">
-            Rosewood Investigations are experts in discreet private
-            investigations, with a dedicated team of experienced investigators.
-            Whatever the case, we can help.
+            Rosewood Investigations is a trusted private investigation agency
+            offering a wide range of professional detective services to meet your
+            needs. Whether you're looking for a private investigator near me,
+            need help with a phone investigation, or require private
+            surveillance, our team of experienced local private investigators
+            is ready to assist. Whatever the case we can help.
           </p>
           <p className="mt-3 text-base leading-relaxed md:text-lg">
-            For all your reliable and approachable investigation needs, call
-            Rosewood Investigations today. We provide 100% confidential,
-            cost-effective support across a wide variety of private detective
-            services.
+            We specialize in a variety of cases, including financial
+            investigations, electronic harassment, and corporate
+            investigations. Our detectives in London. Looking for a private
+            detective or a digital private investigator? At Rosewood
+            Investigations, we offer tailored solutions for everything from
+            missing person cases to fraud investigations, and more.
+          </p>
+          <p className="mt-3 text-base leading-relaxed md:text-lg">
+            Whether you're in need of a legal investigator, personal
+            investigator, or online private investigators, we're here to help.
+            Our team understands the importance of confidentiality, so you can
+            trust us to handle your case with the utmost professionalism.
+          </p>
+          <p className="mt-3 text-base leading-relaxed md:text-lg">
+            Rosewood we have the expertise to handle even the most complex
+            situations. We are dedicated to providing you with reliable and
+            100% confidential private investigation services.
           </p>
         </div>
       </section>
@@ -264,21 +305,20 @@ function App() {
               <h3 className="text-xl font-semibold">Step 1</h3>
               <p className="mt-3 text-base leading-relaxed">
                 Complete the form above and submit to receive your free quote.
-                All details provided remain 100% confidential.
+                All details provided remain 100% Confidential
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold">Step 2</h3>
               <p className="mt-3 text-base leading-relaxed">
                 Discuss your tailored options with an experienced private
-                investigator and decide which option works best for your budget.
+                investigator. Decide which option works best for your budget
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold">Step 3</h3>
               <p className="mt-3 text-base leading-relaxed">
-                All evidence will be gathered and sent to your preferred contact
-                method in a clear, detailed format.
+                All evidence will be sent to your preferred contact method
               </p>
             </div>
           </div>
@@ -360,6 +400,49 @@ function App() {
         </div>
       </section>
 
+      {/* FAQ Accordion */}
+      <section className="bg-white py-12 text-slate-900">
+        <div className="mx-auto max-w-6xl w-full px-4 md:px-6 lg:px-8">
+          {FAQ_ITEMS.map((item, index) => {
+            const isOpen = openFaqIndex === index
+            return (
+              <div
+                key={index}
+                className="border-b border-slate-200 last:border-b-0"
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOpenFaqIndex(isOpen ? null : index)
+                  }
+                  className="flex w-full items-center gap-4 py-5 text-left"
+                  aria-expanded={isOpen}
+                >
+                  <span
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-slate-900 text-white"
+                    aria-hidden
+                  >
+                    {isOpen ? (
+                      <span className="text-lg leading-none">−</span>
+                    ) : (
+                      <span className="text-lg leading-none">+</span>
+                    )}
+                  </span>
+                  <span className="text-base font-medium md:text-lg">
+                    {item.question}
+                  </span>
+                </button>
+                {isOpen && (
+                  <div className="border-t border-slate-100 pb-5 pl-12 pr-4 pt-2 text-sm leading-relaxed text-slate-700 md:text-base">
+                    {item.content}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
       {/* Bottom contact */}
       <section
         id="contact"
@@ -398,7 +481,9 @@ function App() {
             Guildford, GU1 4AR
           </p>
           <p className="mt-3 text-[11px]">
-            Phone: 01234 567 890 &nbsp;|&nbsp; Email: info@rosewood-investigations.com
+            <a href="tel:07407612398" className="text-slate-900 no-underline hover:text-slate-700">Phone: 0740 761 2398</a>
+            {' '}&nbsp;|&nbsp;{' '}
+            <a href="mailto:private@rosewoodinvestigations.com" className="text-slate-900 no-underline hover:text-slate-700">Email: private@rosewoodinvestigations.com</a>
           </p>
           <p className="mt-4 text-[11px] text-slate-500">
             © Copyright {new Date().getFullYear()} | All Rights Reserved

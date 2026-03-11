@@ -20,19 +20,18 @@ app.use(
 )
 app.use(express.json())
 
+const smtpPort = Number(process.env.SMTP_PORT) || 587
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT) || 587,
-  // For many shared hosts (like GoDaddy), TLS is on 587 with STARTTLS.
-  // We also relax certificate checks to avoid 'self-signed certificate' errors.
-  secure: Number(process.env.SMTP_PORT) === 465,
+  port: smtpPort,
+  secure: smtpPort === 465,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-  tls: {
-    rejectUnauthorized: false,
-  },
+  tls: { rejectUnauthorized: false },
+  connectionTimeout: 15000,
+  greetingTimeout: 10000,
 })
 
 app.post('/api/quote', async (req, res) => {

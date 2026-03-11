@@ -45,34 +45,31 @@ app.post('/api/quote', async (req, res) => {
     })
   }
 
-  try {
-    const to = process.env.QUOTE_TO_EMAIL || process.env.SMTP_USER
-    const fromAddress = process.env.QUOTE_FROM_EMAIL || process.env.SMTP_USER
+  const to = process.env.QUOTE_TO_EMAIL || process.env.SMTP_USER
+  const fromAddress = process.env.QUOTE_FROM_EMAIL || process.env.SMTP_USER
+  const subject = `New quote enquiry from ${name}`
+  const text = [
+    `Name: ${name}`,
+    `Email: ${email}`,
+    `Phone: ${phone}`,
+    '',
+    'Details:',
+    details,
+  ].join('\n')
 
-    const subject = `New quote enquiry from ${name}`
-    const text = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `Phone: ${phone}`,
-      '',
-      'Details:',
-      details,
-    ].join('\n')
+  // Respond immediately so nginx never hits 504; send email in background
+  res.json({ ok: true })
 
-    await transporter.sendMail({
+  transporter
+    .sendMail({
       from: `Rosewood Quote Form <${fromAddress}>`,
       to,
       subject,
       text,
     })
-
-    res.json({ ok: true })
-  } catch (err) {
-    console.error('Error sending quote email:', err)
-    res
-      .status(500)
-      .json({ ok: false, message: 'Sorry, something went wrong sending your request.' })
-  }
+    .catch((err) => {
+      console.error('Error sending quote email (background):', err)
+    })
 })
 
 const distPath = path.join(__dirname, 'dist')

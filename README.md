@@ -115,14 +115,23 @@ The server serves the built app from the `dist` folder at `http://localhost:3000
    pm2 save && pm2 startup
    ```
 
-6. **Configure Nginx** as reverse proxy to `http://localhost:3000`, then enable HTTPS with Certbot:
+6. **Configure Nginx** – copy the included config and enable it:
+
+   ```bash
+   cp nginx-rosewood.conf /etc/nginx/sites-available/rosewood-landing
+   ln -s /etc/nginx/sites-available/rosewood-landing /etc/nginx/sites-enabled/
+   rm -f /etc/nginx/sites-enabled/default
+   nginx -t && systemctl reload nginx
+   ```
+
+   Then enable HTTPS:
 
    ```bash
    apt install -y certbot python3-certbot-nginx
-   certbot --nginx -d yourdomain.com -d www.yourdomain.com
+   certbot --nginx -d rosewoodinvestigations.net -d www.rosewoodinvestigations.net
    ```
 
-7. **Point your domain DNS** (A records for `@` and `www`) to the droplet IP.
+7. **Point DNS** – A records for `rosewoodinvestigations.net` and `www.rosewoodinvestigations.net` to the droplet IP.
 
 ### Updating after code changes
 

@@ -9,6 +9,7 @@ function QuoteForm({ variant }) {
   })
 
   const [errors, setErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -32,10 +33,11 @@ function QuoteForm({ variant }) {
     }
 
     setErrors({})
+    setIsSubmitting(true)
     fetch('/api/quote', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...values, source: variant }),
+      body: JSON.stringify(values),
     })
       .then(async (response) => {
         if (!response.ok) {
@@ -49,6 +51,13 @@ function QuoteForm({ variant }) {
           details: '',
         })
         setErrors({ success: 'Thank you. Your request has been sent.' })
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'quote_form_sent', {
+            event_category: 'engagement',
+            event_label: 'Quote request submitted',
+          })
+          window.gtag('event', 'generate_lead', { currency: 'GBP' })
+        }
       })
       .catch((error) => {
         setErrors((prev) => ({
@@ -57,6 +66,9 @@ function QuoteForm({ variant }) {
             error.message ||
             'Sorry, something went wrong sending your request. Please try again.',
         }))
+      })
+      .finally(() => {
+        setIsSubmitting(false)
       })
   }
 
@@ -140,9 +152,14 @@ function QuoteForm({ variant }) {
       )}
       <button
         type="submit"
-        className="mt-2 w-full rounded bg-sky-700 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-sky-600"
+        disabled={isSubmitting}
+        className={`mt-2 w-full rounded px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white ${
+          isSubmitting
+            ? 'bg-slate-500 cursor-not-allowed'
+            : 'bg-sky-700 hover:bg-sky-600'
+        }`}
       >
-        Receive Free Quote
+        {isSubmitting ? 'Sending…' : 'Receive Free Quote'}
       </button>
     </form>
   )

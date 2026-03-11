@@ -23,15 +23,20 @@ app.use(express.json())
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT) || 587,
+  // For many shared hosts (like GoDaddy), TLS is on 587 with STARTTLS.
+  // We also relax certificate checks to avoid 'self-signed certificate' errors.
   secure: Number(process.env.SMTP_PORT) === 465,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
 })
 
 app.post('/api/quote', async (req, res) => {
-  const { name, email, phone, details, source } = req.body || {}
+  const { name, email, phone, details } = req.body || {}
 
   if (!name || !email || !phone || !details) {
     return res.status(400).json({
@@ -42,12 +47,10 @@ app.post('/api/quote', async (req, res) => {
 
   try {
     const to = process.env.QUOTE_TO_EMAIL || process.env.SMTP_USER
-    const from = process.env.QUOTE_FROM_EMAIL || process.env.SMTP_USER
+    const fromAddress = process.env.QUOTE_FROM_EMAIL || process.env.SMTP_USER
 
     const subject = `New quote enquiry from ${name}`
     const text = [
-      `Source: ${source || 'unknown'}`,
-      '',
       `Name: ${name}`,
       `Email: ${email}`,
       `Phone: ${phone}`,
@@ -57,7 +60,7 @@ app.post('/api/quote', async (req, res) => {
     ].join('\n')
 
     await transporter.sendMail({
-      from,
+      from: `Rosewood Quote Form <${fromAddress}>`,
       to,
       subject,
       text,

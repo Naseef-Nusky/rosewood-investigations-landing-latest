@@ -58,6 +58,13 @@ function QuoteForm({ variant }) {
           })
           window.gtag('event', 'generate_lead', { currency: 'GBP' })
         }
+        // Keep \"Sending…\" visible briefly, then reset and softly reload
+        setTimeout(() => {
+          setIsSubmitting(false)
+          if (typeof window !== 'undefined') {
+            window.location.reload()
+          }
+        }, 1200)
       })
       .catch((error) => {
         setErrors((prev) => ({
@@ -66,8 +73,6 @@ function QuoteForm({ variant }) {
             error.message ||
             'Sorry, something went wrong sending your request. Please try again.',
         }))
-      })
-      .finally(() => {
         setIsSubmitting(false)
       })
   }

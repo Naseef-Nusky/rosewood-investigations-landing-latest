@@ -505,7 +505,7 @@ function App() {
           <p className="mt-3 text-[11px]">
             <a href="tel:07407612398" className="text-slate-900 no-underline hover:text-slate-700">Phone: 0740 761 2398</a>
             {' '}&nbsp;|&nbsp;{' '}
-            <a href="mailto:private@rosewoodinvestigations.com" className="text-slate-900 no-underline hover:text-slate-700">Email: private@rosewoodinvestigations.com</a>
+            <a href="mailto:private@rosewoodinvestigations.net" className="text-slate-900 no-underline hover:text-slate-700">Email: private@rosewoodinvestigations.net</a>
           </p>
           <p className="mt-4 text-[11px] text-slate-500">
             © Copyright {new Date().getFullYear()} | All Rights Reserved

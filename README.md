@@ -52,6 +52,8 @@ QUOTE_FROM_EMAIL=private@rosewoodinvestigations.net
 | `SMTP_PASS`        | SMTP password or app password                    |
 | `QUOTE_TO_EMAIL`   | Where quote form submissions are sent            |
 | `QUOTE_FROM_EMAIL` | Sender address shown in emails                   |
+| `SENDGRID_API_KEY` | (Optional) SendGrid API key (HTTPS). If set, quote emails are sent via SendGrid instead of SMTP. Recommended on droplets when SMTP times out. |
+| `SENDGRID_FROM_EMAIL` | (Optional) Verified sender email in SendGrid. If set, used as the From address when sending via SendGrid. |
 
 Do not commit `.env`; it is listed in `.gitignore`.
 

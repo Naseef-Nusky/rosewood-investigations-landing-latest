@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import nodemailer from 'nodemailer'
+import sgMail from '@sendgrid/mail'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -20,6 +21,10 @@ app.use(
 )
 app.use(express.json())
 
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+}
+
 const smtpPort = Number(process.env.SMTP_PORT) || 587
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -33,6 +38,33 @@ const transporter = nodemailer.createTransport({
   connectionTimeout: 15000,
   greetingTimeout: 10000,
 })
+
+function sendQuoteEmailSendGrid({ to, fromAddress, subject, text }) {
+  if (!process.env.SENDGRID_API_KEY) {
+    return Promise.reject(new Error('SENDGRID_API_KEY is not set'))
+  }
+
+  // SendGrid requires the "from" email to be a verified Sender/Domain.
+  const fromEmail =
+    process.env.SENDGRID_FROM_EMAIL ||
+    process.env.QUOTE_FROM_EMAIL ||
+    process.env.SMTP_USER
+
+  const fromName =
+    process.env.SENDGRID_FROM_NAME || 'Rosewood Investigation Quote Form'
+
+  const from = fromAddress || (fromEmail ? { email: fromEmail, name: fromName } : undefined)
+
+  if (!from) {
+    return Promise.reject(
+      new Error(
+        'SendGrid requires a verified From address. Set SENDGRID_FROM_EMAIL or QUOTE_FROM_EMAIL.',
+      ),
+    )
+  }
+
+  return sgMail.send({ to, from, subject, text })
+}
 
 app.post('/api/quote', async (req, res) => {
   const { name, email, phone, details } = req.body || {}
@@ -59,9 +91,16 @@ app.post('/api/quote', async (req, res) => {
   // Respond immediately so nginx never hits 504; send email in background
   res.json({ ok: true })
 
+  if (process.env.SENDGRID_API_KEY) {
+    sendQuoteEmailSendGrid({ to, fromAddress, subject, text }).catch((err) => {
+      console.error('Error sending quote email (SendGrid, background):', err)
+    })
+    return
+  }
+
   transporter
     .sendMail({
-      from: `Rosewood Quote Form <${fromAddress}>`,
+      from: `Rosewood Investigation Quote Form <${fromAddress}>`,
       to,
       subject,
       text,

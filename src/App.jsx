@@ -186,11 +186,13 @@ function ThanksPage() {
       <header className="bg-white text-slate-900 shadow">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-3 md:flex-row md:gap-3 md:py-4">
           <div className="flex items-center gap-3">
-            <img
-              src="/logo.png"
-              alt="Rosewood Investigations"
-              className="h-10 w-auto"
-            />
+            <a href="/" className="focus:outline-none">
+              <img
+                src="/logo.png"
+                alt="Rosewood Investigations"
+                className="h-10 w-auto"
+              />
+            </a>
           </div>
           <div className="flex flex-col items-stretch gap-2 text-xs md:flex-row md:items-center md:gap-4">
             <a
@@ -215,11 +217,13 @@ function ThanksPage() {
           Thank you for your inquiry
         </h1>
         <div className="mt-16 flex flex-col items-center text-center">
-          <img
-            src="/logo.png"
-            alt="Rosewood Investigations"
-            className="h-12 w-auto"
-          />
+          <a href="/" className="focus:outline-none">
+            <img
+              src="/logo.png"
+              alt="Rosewood Investigations"
+              className="h-12 w-auto"
+            />
+          </a>
           <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-800">
             Rosewood Investigations
           </p>
@@ -297,11 +301,13 @@ function App() {
       <header className="bg-white text-slate-900 shadow">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-3 md:flex-row md:gap-3 md:py-4">
           <div className="flex items-center gap-3">
-            <img
-              src="/logo.png"
-              alt="Rosewood Investigations"
-              className="h-10 w-auto"
-            />
+            <a href="/" className="focus:outline-none">
+              <img
+                src="/logo.png"
+                alt="Rosewood Investigations"
+                className="h-10 w-auto"
+              />
+            </a>
           </div>
           <div className="flex flex-col items-stretch gap-2 text-xs md:flex-row md:items-center md:gap-4">
             <a
@@ -587,11 +593,13 @@ function App() {
       {/* Footer */}
       <footer className="bg-white py-10 text-xs text-slate-800">
         <div className="mx-auto max-w-3xl px-4 text-center">
-          <img
-            src="/logo.png"
-            alt="Rosewood Investigations"
-            className="mx-auto h-10 w-auto"
-          />
+          <a href="/" className="inline-block focus:outline-none">
+            <img
+              src="/logo.png"
+              alt="Rosewood Investigations"
+              className="mx-auto h-10 w-auto"
+            />
+          </a>
           <p className="mt-4 font-semibold tracking-wide">
             ROSEWOOD INVESTIGATIONS.
           </p>

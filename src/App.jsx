@@ -281,6 +281,13 @@ function App() {
   )
 
   useEffect(() => {
+    if (window.location.pathname === THANKS_PATH) {
+      window.location.replace('/')
+      return
+    }
+  }, [])
+
+  useEffect(() => {
     const onPopState = () => setPath(window.location.pathname)
     window.addEventListener('popstate', onPopState)
     return () => window.removeEventListener('popstate', onPopState)

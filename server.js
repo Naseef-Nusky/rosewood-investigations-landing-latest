@@ -76,7 +76,11 @@ app.post('/api/quote', async (req, res) => {
     })
   }
 
-  const to = process.env.QUOTE_TO_EMAIL || process.env.SMTP_USER
+  const toEnv = process.env.QUOTE_TO_EMAIL || process.env.SMTP_USER
+  const to =
+    toEnv && toEnv.includes(',')
+      ? toEnv.split(',').map((addr) => addr.trim()).filter(Boolean)
+      : toEnv
   const fromAddress = process.env.QUOTE_FROM_EMAIL || process.env.SMTP_USER
   const subject = `New quote enquiry from ${name}`
   const text = [
@@ -101,7 +105,7 @@ app.post('/api/quote', async (req, res) => {
   transporter
     .sendMail({
       from: `Rosewood Investigation Quote Form <${fromAddress}>`,
-      to,
+      to: Array.isArray(to) ? to.join(',') : to,
       subject,
       text,
     })

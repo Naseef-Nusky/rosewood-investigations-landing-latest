@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-function QuoteForm({ variant }) {
+function QuoteForm({ variant, onSuccess }) {
   const [values, setValues] = useState({
     name: '',
     email: '',
@@ -50,7 +50,6 @@ function QuoteForm({ variant }) {
           phone: '',
           details: '',
         })
-        setErrors({ success: 'Thank you. Your request has been sent.' })
         if (typeof window.gtag === 'function') {
           window.gtag('event', 'quote_form_sent', {
             event_category: 'engagement',
@@ -58,13 +57,8 @@ function QuoteForm({ variant }) {
           })
           window.gtag('event', 'generate_lead', { currency: 'GBP' })
         }
-        // Keep \"Sending…\" visible briefly, then reset and softly reload
-        setTimeout(() => {
-          setIsSubmitting(false)
-          if (typeof window !== 'undefined') {
-            window.location.reload()
-          }
-        }, 1200)
+        setIsSubmitting(false)
+        if (onSuccess) onSuccess()
       })
       .catch((error) => {
         setErrors((prev) => ({
@@ -170,6 +164,92 @@ function QuoteForm({ variant }) {
   )
 }
 
+const THANKS_PATH = '/thank-you'
+
+function ThanksPage() {
+  useEffect(() => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', {
+        page_path: THANKS_PATH,
+        page_title: 'Thank You | Rosewood Investigations',
+      })
+      window.gtag('event', 'thanks_page_view', {
+        event_category: 'conversion',
+        event_label: 'Enquiry thank you page viewed',
+      })
+    }
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-white text-slate-900">
+      {/* Header */}
+      <header className="bg-white text-slate-900 shadow">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-3 md:flex-row md:gap-3 md:py-4">
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo.png"
+              alt="Rosewood Investigations"
+              className="h-10 w-auto"
+            />
+          </div>
+          <div className="flex flex-col items-stretch gap-2 text-xs md:flex-row md:items-center md:gap-4">
+            <a
+              href="tel:07407612398"
+              className="rounded-full bg-[#0052cc] px-6 py-2 text-center text-xs font-semibold tracking-[0.25em] text-white hover:bg-[#0043a3]"
+            >
+              0740&nbsp;761&nbsp;2398
+            </a>
+            <a
+              href="tel:07407612398"
+              className="rounded-full bg-[#0052cc] px-6 py-2 text-center text-[11px] font-semibold tracking-[0.18em] text-white hover:bg-[#0043a3]"
+            >
+              CALL US TODAY FOR A FREE QUOTE
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Main thank you content */}
+      <main className="flex min-h-[calc(100vh-180px)] flex-col items-center justify-center px-4 py-16">
+        <h1 className="text-center font-serif text-3xl font-bold uppercase tracking-wide text-[#8B2E2E] md:text-4xl">
+          Thank you for your inquiry
+        </h1>
+        <div className="mt-16 flex flex-col items-center text-center">
+          <img
+            src="/logo.png"
+            alt="Rosewood Investigations"
+            className="h-12 w-auto"
+          />
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-800">
+            Rosewood Investigations
+          </p>
+          <p className="mt-2 text-xs leading-relaxed text-slate-700">
+            Units A–J Austen House, Station View,
+            <br />
+            Guildford, GU1 4AR
+          </p>
+          <p className="mt-3 text-xs text-slate-700">
+            <a href="tel:07407612398" className="text-slate-900 no-underline hover:text-slate-700">
+              Phone: 0740 761 2398
+            </a>
+            {' '}
+            <span className="text-slate-400">Email:</span>{' '}
+            <a href="mailto:private@rosewoodinvestigations.net" className="text-slate-900 no-underline hover:text-slate-700">
+              private@rosewoodinvestigations.net
+            </a>
+          </p>
+          <p className="mt-4 text-[11px] text-slate-500">
+            © Copyright {new Date().getFullYear()} | All Rights Reserved
+          </p>
+        </div>
+      </main>
+
+      {/* Footer bar */}
+      <footer className="h-3 w-full bg-slate-200" aria-hidden />
+    </div>
+  )
+}
+
 const FAQ_ITEMS = [
   {
     question: 'How much does a private investigator cost?',
@@ -192,6 +272,24 @@ const FAQ_ITEMS = [
 
 function App() {
   const [openFaqIndex, setOpenFaqIndex] = useState(null)
+  const [path, setPath] = useState(
+    () => (typeof window !== 'undefined' ? window.location.pathname : '/')
+  )
+
+  useEffect(() => {
+    const onPopState = () => setPath(window.location.pathname)
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  const goToThanks = () => {
+    window.history.pushState({}, '', THANKS_PATH)
+    setPath(THANKS_PATH)
+  }
+
+  if (path === THANKS_PATH) {
+    return <ThanksPage />
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -258,7 +356,7 @@ function App() {
                 <br />
                 Your Free Quote
               </h2>
-              <QuoteForm variant="hero" />
+              <QuoteForm variant="hero" onSuccess={goToThanks} />
             </div>
           </div>
         </div>
@@ -481,7 +579,7 @@ function App() {
             Please Submit Your Details Below To Receive Your Free Quote
           </h2>
           <div className="mx-auto mt-6 max-w-xl">
-            <QuoteForm variant="bottom" />
+            <QuoteForm variant="bottom" onSuccess={goToThanks} />
           </div>
         </div>
       </section>
